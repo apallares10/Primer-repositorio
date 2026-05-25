@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Rey del Rebusque</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23004d2a'/%3E%3Cpath d='M18 43c0 4.4-3.6 8-8 8s-8-3.6-8-8 3.6-8 8-8 8 3.6 8 8zM54 43c0 4.4-3.6 8-8 8s-8-3.6-8-8 3.6-8 8-8 8 3.6 8 8z' fill='%23fff'/%3E%3Cpath d='M12 35h12l8-16h14l6 12h-8l-6-6-4 6h-8l-8 8z' fill='%23fff'/%3E%3Cpath d='M36 19h10l8 8v4h-4l-6-6h-8v-6z' fill='%23fff'/%3E%3C/svg%3E" />
+<link href="https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif;}
+
+/* ── FONDO ── */
+#bg{position:fixed;inset:0;z-index:0;
+  background:url('https://cdn.semanariolacalle.com/2023/01/Valledupar-la-ciudad-que-ofrece-los-e1673272425120.png') center/cover no-repeat;
+  filter:blur(2px) brightness(0.52) saturate(1.15);transform:scale(1.05);}
+#bg-ov{position:fixed;inset:0;z-index:1;
+  background:radial-gradient(ellipse 80% 80% at 50% 50%,rgba(0,0,0,0.08),rgba(0,0,0,0.5));}
+
+/* ── NAVBAR — estilo Monopoly Go vibrante ── */
+#navbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;height:56px;
+  background:linear-gradient(135deg,#5a1fa8 0%,#7b2fcf 30%,#8b35e8 50%,#7b2fcf 70%,#5a1fa8 100%);
+  border-bottom:3px solid #b060ff;
+  box-shadow:0 4px 0 #35108a,0 6px 20px rgba(0,0,0,0.55);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;
+}
+#navbar::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2.5px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5) 20%,rgba(255,255,255,.8) 50%,rgba(255,255,255,.5) 80%,transparent);
+}
+#navbar::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,#c080ff 30%,#e0b0ff 50%,#c080ff 70%,transparent);
+}
+.nav-logo{
+  font-family:'Jaro',sans-serif;font-size:20px;letter-spacing:.5px;
+  display:flex;align-items:center;gap:9px;
+  color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.4),0 0 20px rgba(200,120,255,.4);
+}
+.nav-logo-moto{font-size:24px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4));}
+.nav-center{display:flex;align-items:center;gap:8px;}
+.nav-pill{
+  background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.08));
+  border:1.5px solid rgba(255,255,255,.3);
+  border-radius:20px;padding:5px 13px;
+  font-family:'Jaro',sans-serif;font-size:12px;color:#fff;
+  display:flex;align-items:center;gap:5px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 2px 6px rgba(0,0,0,.2);
+  backdrop-filter:blur(4px);
+}
+.nav-pill .label{color:rgba(255,255,255,.6);font-size:10px;}
+.nav-turn-pill{
+  background:linear-gradient(145deg,#ff9030,#e06010);
+  border:2px solid rgba(255,200,100,.4);
+  border-radius:20px;padding:5px 13px;
+  font-family:'Jaro',sans-serif;font-size:12px;color:#fff;
+  display:flex;align-items:center;gap:5px;
+  box-shadow:0 3px 0 #a03000,0 4px 12px rgba(0,0,0,.3);
+  text-shadow:1px 1px 0 rgba(0,0,0,.3);
+}
+.nav-right{display:flex;align-items:center;gap:7px;}
+#btn-rules{
+  background:linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.08));
+  border:1.5px solid rgba(255,255,255,.35);color:#fff;
+  border-radius:14px;padding:6px 13px;
+  font-family:'Jaro',sans-serif;font-size:12px;cursor:pointer;
+  box-shadow:0 2px 0 rgba(0,0,0,.25);
+  transition:transform .1s,box-shadow .1s;text-shadow:0 1px 2px rgba(0,0,0,.3);
+}
+#btn-rules:hover{transform:translateY(-1px);background:rgba(255,255,255,.28);}
+#btn-end{
+  background:linear-gradient(145deg,#ff3830,#c01008);
+  color:#fff;border:none;border-radius:14px;
+  padding:6px 13px;font-family:'Jaro',sans-serif;font-size:12px;
+  cursor:pointer;box-shadow:0 3px 0 #800000;
+  transition:transform .1s,box-shadow .1s;
+  text-shadow:1px 1px 0 rgba(0,0,0,.4);
+}
+#btn-end:hover{transform:translateY(-1px);box-shadow:0 4px 0 #800000;}
+#btn-end:active{transform:translateY(2px);box-shadow:0 1px 0 #800000;}
+
+/* ── LAYOUT ── */
+#game{
+  position:fixed;inset:0;z-index:10;
+  padding-top:50px;padding-bottom:60px;
+  display:grid;
+  grid-template-columns:190px 1fr 190px;
+  grid-template-rows:1fr;
+  align-items:center;
+  gap:0;
+  overflow:hidden;
+}
+#panel-left{
+  grid-column:1;
+  display:flex;flex-direction:column;gap:8px;
+  padding:8px 6px 8px 10px;
+  overflow-y:auto;max-height:100%;
+}
+#board-area{
+  grid-column:2;
+  display:flex;align-items:center;justify-content:center;
+  height:100%;overflow:hidden;
+}
+#panel-right{
+  grid-column:3;
+  display:flex;flex-direction:column;gap:8px;
+  padding:8px 10px 8px 6px;
+  overflow-y:auto;max-height:100%;
+}
+
+/* ── TABLERO ── */
+#board-scene{
+  position:relative;
+  /* dynamic sizing via JS */
+}
+#board-shadow{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,0.4);
+  filter:blur(28px);
+  transform:translate(20px,20px);
+  border-radius:8px;
+}
+#board-iso{
+  position:relative;
+  transform:rotateX(50deg) rotateZ(-45deg);
+  transform-origin:50% 50%;
+  transform-style:preserve-3d;
+}
+#board-base{
+  position:absolute;inset:0;
+  background:linear-gradient(145deg,#fff8e0,#f0e0a0,#e0cc80);
+  border-radius:6px;
+}
+#board-base::before{
+  content:'';position:absolute;inset:-5px;
+  background:linear-gradient(135deg,#ffd700,#f0a800,#ffd700,#c88000);
+  border-radius:10px;z-index:-1;
+}
+#board-base::after{
+  content:'';position:absolute;
+  bottom:-16px;left:6px;right:6px;height:16px;
+  background:linear-gradient(180deg,#a07000,#503000);
+  border-radius:0 0 5px 5px;
+}
+#board-center{
+  position:absolute;
+  background:
+    repeating-linear-gradient(0deg,rgba(80,0,80,0.06) 0,rgba(80,0,80,0.06) 1px,transparent 1px,transparent 40px),
+    repeating-linear-gradient(90deg,rgba(80,0,80,0.06) 0,rgba(80,0,80,0.06) 1px,transparent 1px,transparent 40px),
+    linear-gradient(145deg,#7b22d8,#5a10b0,#3d0878);
+  border-radius:4px;
+  border:4px solid rgba(255,255,255,0.18);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 60px rgba(0,0,0,0.3),inset 0 0 0 2px rgba(180,100,255,0.2);
+}
+#center-logo{
+  transform:rotateZ(45deg);
+  text-align:center;
+  font-family:'Jaro',sans-serif;
+  line-height:1.05;
+}
+.cl-el{display:block;color:#ff9040;text-shadow:2px 2px 0 #602000;}
+.cl-rey{display:block;color:#ffe135;text-shadow:3px 3px 0 #806000,0 0 20px rgba(255,220,0,.5);}
+.cl-del{display:block;color:#4ef0e0;text-shadow:2px 2px 0 #006060;}
+.cl-reb{display:block;color:#ff6bbd;text-shadow:2px 2px 0 #800040;}
+.cl-sub{display:block;font-family:'Nunito',sans-serif;font-size:9px;
+  letter-spacing:4px;color:rgba(255,255,255,.65);text-transform:uppercase;margin-top:5px;}
+
+/* ── TILES ── */
+.tile{
+  position:absolute;
+  background:linear-gradient(160deg,#fffdf5,#f5ead0,#e8d8b0);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  overflow:hidden;
+  border:1px solid rgba(160,120,20,.4);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(0,0,0,.07),1px 2px 0 rgba(0,0,0,.14);
+}
+.tile-band{position:absolute;top:0;left:0;right:0;height:18px;}
+.tile-icon-wrap{margin-top:15px;font-size:18px;line-height:1;position:relative;z-index:2;}
+.tile-label{
+  font-family:'Jaro',sans-serif;font-size:5.5px;color:#2a1500;
+  text-align:center;line-height:1.15;padding:0 2px;margin-top:1px;
+  letter-spacing:.1px;position:relative;z-index:2;
+}
+.tile-corner{background:linear-gradient(145deg,#fff8d0,#ffeaa0,#f0d870);}
+.tile-corner .tile-icon-wrap{font-size:22px;margin-top:8px;}
+.tile-corner .tile-label{font-size:6px;}
+.tile-active{
+  box-shadow:0 0 0 2.5px #fff700,0 0 16px 4px rgba(255,240,0,.85),1px 2px 0 rgba(0,0,0,.14)!important;
+  z-index:15;filter:brightness(1.15) saturate(1.4);
+  animation:tGlow .9s ease-in-out infinite alternate;
+}
+@keyframes tGlow{
+  from{box-shadow:0 0 0 2.5px #fff700,0 0 12px 3px rgba(255,240,0,.8),1px 2px 0 rgba(0,0,0,.14);}
+  to{box-shadow:0 0 0 2.5px #ffee00,0 0 22px 7px rgba(255,220,0,.55),1px 2px 0 rgba(0,0,0,.14);}
+}
+.band-orange{background:linear-gradient(90deg,#ff7820,#e05010);}
+.band-green{background:linear-gradient(90deg,#44cc30,#28a018);}
+.band-purple{background:linear-gradient(90deg,#c060f0,#8030c0);}
+.band-blue{background:linear-gradient(90deg,#4080f0,#2050d0);}
+.band-red{background:linear-gradient(90deg,#f03030,#c00818);}
+.band-gold{background:linear-gradient(90deg,#ffc020,#d09000);}
+.band-teal{background:linear-gradient(90deg,#20ccc0,#009888);}
+.band-pink{background:linear-gradient(90deg,#f060b0,#c03080);}
+.band-lime{background:linear-gradient(90deg,#90e030,#60c010);}
+
+/* ── MOTOS ── */
+.moto-wrap{
+  position:absolute;z-index:25;pointer-events:none;
+  transition:left .4s cubic-bezier(.34,1.56,.64,1),top .4s cubic-bezier(.34,1.56,.64,1);
+}
+.moto-svg{filter:drop-shadow(2px 6px 6px rgba(0,0,0,.65));}
+.moto-svg.hop{animation:mHop .4s ease;}
+@keyframes mHop{40%{transform:translateY(-18px) scale(1.12);}100%{transform:translateY(0) scale(1);}}
+.moto-badge{
+  position:absolute;top:-6px;right:-6px;
+  background:linear-gradient(135deg,#ffe135,#f0a000);
+  border:2px solid #fff;border-radius:50%;
+  width:16px;height:16px;
+  display:none;align-items:center;justify-content:center;
+  font-size:7px;font-family:'Jaro',sans-serif;color:#1a1000;
+}
+
+/* ── PLAYER CARDS — colorful Monopoly Go style ── */
+.p-card{
+  border-radius:18px;border:3px solid rgba(255,255,255,.25);
+  padding:0 0 10px;
+  box-shadow:0 6px 0 rgba(0,0,0,.35),0 8px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.2);
+  position:relative;overflow:hidden;
+  transition:box-shadow .25s,transform .25s;
+}
+/* Card backgrounds per player — set via JS inline style */
+.p-card-hdr{
+  height:42px;display:flex;align-items:center;
+  padding:0 12px;gap:8px;border-radius:15px 15px 0 0;position:relative;
+}
+.p-card-hdr::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.25),transparent);
+  border-radius:15px 15px 0 0;pointer-events:none;}
+.p-avatar{width:28px;height:26px;flex-shrink:0;}
+.p-name{font-family:'Jaro',sans-serif;font-size:14px;color:#fff;
+  text-shadow:1px 2px 0 rgba(0,0,0,.5);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.p-card-body{padding:8px 12px 0;}
+.p-card-active{
+  border-color:rgba(255,255,255,.6)!important;
+  box-shadow:0 0 0 3px #ffe135,0 0 18px rgba(255,220,0,.5),0 6px 0 rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.4)!important;
+  transform:scale(1.04);
+}
+.p-card-elim{opacity:.22;filter:grayscale(1);}
+.stat{display:flex;align-items:center;justify-content:space-between;
+  font-size:10px;font-weight:900;color:rgba(255,255,255,.75);margin-bottom:3px;}
+.stat-val{font-family:'Jaro',sans-serif;font-size:14px;color:#fff;text-shadow:1px 1px 0 rgba(0,0,0,.4);}
+.stat-val.low{color:#ffcc00;}
+.gas-bar{width:100%;height:8px;background:rgba(0,0,0,.3);border-radius:20px;overflow:hidden;
+  margin-bottom:7px;border:1px solid rgba(255,255,255,.15);}
+.gas-fill{height:100%;border-radius:20px;
+  background:linear-gradient(90deg,#40ff40,#80ff60);transition:width .5s,background .5s;
+  box-shadow:0 0 6px rgba(100,255,80,.5);}
+.gas-fill.low{background:linear-gradient(90deg,#ff4020,#ff9030);box-shadow:0 0 6px rgba(255,80,20,.5);}
+.upg-sec{margin-top:6px;border-top:1.5px solid rgba(255,255,255,.15);padding-top:5px;}
+.upg-title{font-family:'Jaro',sans-serif;font-size:7px;letter-spacing:2px;
+  color:rgba(255,255,255,.55);text-transform:uppercase;margin-bottom:4px;}
+.upg-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.upg-item{border-radius:8px;padding:3px 5px;display:flex;align-items:center;gap:3px;
+  font-size:8px;font-family:'Jaro',sans-serif;border:1.5px solid;}
+.upg-item.locked{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.25);}
+.upg-item.locked .ui-ico{filter:grayscale(1) opacity(.2);}
+.upg-item.ul-casco{background:rgba(60,150,255,.25);border-color:rgba(100,180,255,.5);color:#c0e0ff;}
+.upg-item.ul-papeles{background:rgba(80,220,100,.2);border-color:rgba(100,240,120,.5);color:#a0ffb0;}
+.upg-item.ul-manten{background:rgba(255,200,0,.2);border-color:rgba(255,220,50,.5);color:#ffe880;}
+.upg-item.ul-app{background:rgba(220,80,255,.2);border-color:rgba(240,120,255,.5);color:#f0b0ff;}
+.ui-ico{font-size:11px;flex-shrink:0;}
+.turn-arr{position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  font-size:9px;font-family:'Jaro',sans-serif;color:#ffe135;
+  text-shadow:0 0 6px rgba(255,225,0,.9);animation:arr .65s ease-in-out infinite alternate;}
+@keyframes arr{from{opacity:.7;transform:translateY(-50%) translateX(0);}to{opacity:1;transform:translateY(-50%) translateX(-3px);}}
+
+/* ── BOTTOM BAR — vibrante ── */
+#bottom-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;height:64px;
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  padding:0 20px;
+  background:linear-gradient(0deg,rgba(30,0,60,.88) 0%,rgba(50,0,90,.5) 60%,transparent 100%);
+}
+#dice-box{
+  width:72px;height:62px;
+  background:linear-gradient(135deg,#fff9d0,#f7df9c);
+  border:4px solid #ffd700;border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;
+  box-shadow:0 8px 0 #8b5200,0 10px 24px rgba(0,0,0,.45);
+}
+.dice-rolling{animation:dA .12s ease-in-out infinite;}
+@keyframes dA{0%{transform:rotate(-18deg) scale(1.14);}50%{transform:rotate(18deg) scale(.90);}100%{transform:rotate(-18deg) scale(1.14);}}
+#dice-box.dice-rolling{box-shadow:0 16px 0 #8b5200,0 18px 36px rgba(0,0,0,.55);}
+body.screen-rumble #game,
+body.screen-rumble #board-area,
+body.screen-rumble #navbar{
+  animation:shake 0.36s ease-in-out;
+}
+@keyframes shake{0%{transform:translate(0,0);}10%{transform:translate(-4px,3px);}20%{transform:translate(4px,-4px);}30%{transform:translate(-4px,2px);}40%{transform:translate(4px,-3px);}50%{transform:translate(-3px,3px);}60%{transform:translate(3px,-2px);}70%{transform:translate(-2px,1px);}80%{transform:translate(2px,-1px);}90%{transform:translate(-1px,0);}100%{transform:translate(0,0);}}
+body.music-active #navbar{box-shadow:0 20px 80px rgba(255,230,120,.22);}
+body.music-active #btn-audio-toggle{animation:audioPulse 1.4s ease-in-out infinite;}
+@keyframes audioPulse{0%{transform:scale(1);box-shadow:0 2px 0 rgba(0,0,0,.3),0 0 12px rgba(255,240,120,.22);}50%{transform:scale(1.02);box-shadow:0 2px 0 rgba(0,0,0,.3),0 0 24px rgba(255,240,120,.35);}100%{transform:scale(1);box-shadow:0 2px 0 rgba(0,0,0,.3),0 0 12px rgba(255,240,120,.22);}}
+#turn-badge-bot{
+  background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.08));
+  border:2px solid rgba(255,255,255,.3);color:#fff;
+  padding:9px 20px;border-radius:50px;
+  font-family:'Jaro',sans-serif;font-size:15px;
+  box-shadow:0 3px 0 rgba(0,0,0,.3),0 5px 14px rgba(0,0,0,.25);
+  text-shadow:0 1px 3px rgba(0,0,0,.5);backdrop-filter:blur(6px);
+}
+#btn-roll{
+  background:linear-gradient(145deg,#ff9020,#e05010);
+  color:#fff;border:none;padding:12px 30px;border-radius:50px;
+  font-family:'Jaro',sans-serif;font-size:20px;cursor:pointer;
+  box-shadow:0 6px 0 #902800,0 8px 22px rgba(0,0,0,.35);
+  text-shadow:1px 2px 0 rgba(0,0,0,.3);
+  transition:transform .1s,box-shadow .1s;
+  border:2px solid rgba(255,180,80,.3);
+}
+#btn-roll:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 9px 0 #902800,0 12px 26px rgba(0,0,0,.35);}
+#btn-roll:active:not(:disabled){transform:translateY(5px);box-shadow:0 1px 0 #902800;}
+#btn-roll:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── MODAL — estilo Monopoly Go vibrante ── */
+#overlay{display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.68);align-items:center;justify-content:center;
+  backdrop-filter:blur(6px);}
+#overlay.show{display:flex;}
+.modal{
+  background:linear-gradient(145deg,#6b22c0,#8b35e8 40%,#7020b0);
+  border:3px solid rgba(255,255,255,.3);border-radius:28px;
+  padding:30px 34px;text-align:center;max-width:440px;width:90%;
+  box-shadow:0 8px 0 #35108a,0 14px 50px rgba(0,0,0,.6);
+  animation:mPop .35s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.modal::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(160deg,rgba(255,255,255,.12) 0%,transparent 55%);
+  pointer-events:none;border-radius:26px;
+}
+.modal::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:5px;
+  background:var(--modal-accent,linear-gradient(90deg,#ff9030,#ffe135,#ff9030));
+  border-radius:26px 26px 0 0;
+}
+/* Per-type modal backgrounds */
+.modal.m-azar{background:linear-gradient(145deg,#e06010,#c04000 50%,#a03000);}
+.modal.m-azar::after{background:linear-gradient(90deg,#ffcc00,#ff8030,#ffcc00);}
+.modal.m-carrera-bien{background:linear-gradient(145deg,#1a7818,#228b22 50%,#145a10);}
+.modal.m-carrera-bien::after{background:linear-gradient(90deg,#a0ff60,#40e030,#a0ff60);}
+.modal.m-carrera-mal{background:linear-gradient(145deg,#b03010,#c04020 50%,#902010);}
+.modal.m-carrera-mal::after{background:linear-gradient(90deg,#ffaa30,#ff6030,#ffaa30);}
+.modal.m-mejora{background:linear-gradient(145deg,#6b22c0,#8b35e8 50%,#7020b0);}
+.modal.m-mejora::after{background:linear-gradient(90deg,#ffe135,#ffaa00,#ffe135);}
+.modal.m-reten{background:linear-gradient(145deg,#5a10a0,#7030c0 50%,#4a0888);}
+.modal.m-reten::after{background:linear-gradient(90deg,#ff40ff,#cc00cc,#ff40ff);}
+.modal.m-pinchazo{background:linear-gradient(145deg,#b01010,#d02020 50%,#901010);}
+.modal.m-pinchazo::after{background:linear-gradient(90deg,#ff8080,#ff3030,#ff8080);}
+.modal.m-trancon{background:linear-gradient(145deg,#103098,#1840c0 50%,#0a2070);}
+.modal.m-trancon::after{background:linear-gradient(90deg,#80c0ff,#4080ff,#80c0ff);}
+.modal.m-casa{background:linear-gradient(145deg,#806000,#c09010 50%,#a07000);}
+.modal.m-casa::after{background:linear-gradient(90deg,#ffe135,#ffd700,#ffe135);}
+@keyframes mPop{from{transform:scale(.6) rotate(-4deg);}to{transform:scale(1) rotate(0);}}
+#modal-icon{font-size:56px;display:block;margin-bottom:8px;position:relative;z-index:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4));}
+#modal-title{font-family:'Jaro',sans-serif;font-size:28px;color:#fff;margin-bottom:6px;position:relative;z-index:1;text-shadow:2px 3px 0 rgba(0,0,0,.3);}
+#modal-tipo{display:inline-block;font-family:'Jaro',sans-serif;font-size:12px;letter-spacing:2px;
+  padding:3px 14px;border-radius:20px;margin-bottom:10px;
+  background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.35);
+  color:#fff;position:relative;z-index:1;}
+#modal-text{font-size:14px;color:rgba(255,255,255,.92);line-height:1.55;margin-bottom:10px;font-weight:700;font-style:italic;position:relative;z-index:1;}
+#modal-effect{font-family:'Jaro',sans-serif;font-size:16px;
+  border-radius:14px;padding:9px 14px;margin-bottom:14px;color:#fff;
+  background:rgba(0,0,0,.3);border:1.5px solid rgba(255,255,255,.2);
+  position:relative;z-index:1;text-shadow:1px 1px 0 rgba(0,0,0,.3);}
+.btn-ok{
+  background:linear-gradient(145deg,#ffe135,#f0c000);color:#1a1000;border:none;
+  padding:12px 32px;border-radius:50px;font-family:'Jaro',sans-serif;font-size:19px;cursor:pointer;
+  box-shadow:0 5px 0 #907000,0 7px 18px rgba(0,0,0,.3);
+  transition:transform .1s,box-shadow .1s;position:relative;z-index:1;
+  text-shadow:0 1px 0 rgba(255,255,255,.4);}
+.btn-ok:hover{transform:translateY(-2px);box-shadow:0 7px 0 #907000,0 10px 22px rgba(0,0,0,.3);}
+.btn-ok:active{transform:translateY(3px);box-shadow:0 2px 0 #907000;}
+.shop-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0;}
+.shop-item{
+  background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.28);border-radius:16px;
+  padding:12px 10px;width:126px;text-align:left;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15);transition:background .2s;
+}
+.shop-item:hover{background:rgba(255,255,255,.22);}
+.si-icon{font-size:26px;margin-bottom:4px;}
+.si-name{font-family:'Jaro',sans-serif;font-size:12px;color:#fff;margin-bottom:3px;text-shadow:0 1px 2px rgba(0,0,0,.3);}
+.si-desc{font-size:9px;color:rgba(255,255,255,.78);margin-bottom:7px;line-height:1.4;}
+.btn-buy{
+  background:linear-gradient(145deg,#ffe135,#e0b000);color:#1a1000;border:none;
+  padding:5px 10px;border-radius:20px;font-family:'Jaro',sans-serif;font-size:11px;
+  cursor:pointer;box-shadow:0 3px 0 #907000;width:100%;font-weight:900;
+}
+.btn-buy:hover:not(:disabled){background:linear-gradient(145deg,#fff060,#f0c000);}
+.btn-buy:disabled{background:rgba(255,255,255,.2);box-shadow:none;cursor:not-allowed;color:rgba(255,255,255,.4);}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:74px;left:50%;transform:translateX(-50%) translateY(20px);
+  z-index:400;
+  background:linear-gradient(135deg,#6b22c0,#8b35e8);
+  border:2px solid rgba(255,255,255,.3);color:#fff;
+  padding:9px 22px;border-radius:50px;font-family:'Jaro',sans-serif;font-size:13px;
+  box-shadow:0 5px 0 rgba(0,0,0,.3),0 7px 18px rgba(0,0,0,.4);
+  text-shadow:0 1px 2px rgba(0,0,0,.4);
+  opacity:0;transition:opacity .3s,transform .3s;white-space:nowrap;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── START ── */
+#start-screen{position:fixed;inset:0;z-index:500;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(8px);}
+.start-box{
+  background:linear-gradient(145deg,#6b22c0,#8b35e8 50%,#7020b0);
+  border:3px solid rgba(255,255,255,.25);border-radius:32px;padding:38px 48px;text-align:center;max-width:440px;
+  box-shadow:0 10px 0 #35108a,0 18px 60px rgba(0,0,0,.6);
+}
+.start-box::before{content:'';position:absolute;top:0;left:0;right:0;height:100px;
+  background:linear-gradient(180deg,rgba(255,255,255,.1),transparent);border-radius:30px 30px 0 0;pointer-events:none;}
+.start-title{font-family:'Jaro',sans-serif;font-size:11px;letter-spacing:4px;color:rgba(255,255,255,.6);
+  text-transform:uppercase;margin-bottom:8px;}
+.start-logo{font-family:'Jaro',sans-serif;line-height:1;margin-bottom:10px;}
+.s-el{font-size:32px;color:#ff9040;display:block;text-shadow:2px 2px 0 rgba(0,0,0,.4);}
+.s-rey{font-size:54px;color:#ffe135;display:block;text-shadow:3px 4px 0 rgba(0,0,0,.35);}
+.s-del{font-size:28px;color:#40e0d0;display:block;}
+.s-reb{font-size:44px;color:#ff80cc;display:block;text-shadow:2px 3px 0 rgba(0,0,0,.4);}
+.start-sub{font-family:'Jaro',sans-serif;font-size:13px;color:rgba(255,255,255,.7);margin-bottom:6px;letter-spacing:1px;}
+.start-hint{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:22px;font-weight:700;}
+.player-btns{display:flex;gap:10px;justify-content:center;}
+.btn-p{background:linear-gradient(145deg,#ffe135,#f0c000);color:#1a1000;border:none;
+  padding:12px 20px;border-radius:16px;font-family:'Jaro',sans-serif;font-size:18px;cursor:pointer;
+  box-shadow:0 5px 0 #907000;transition:transform .1s,box-shadow .1s;font-weight:900;}
+.btn-p:hover{transform:translateY(-3px);box-shadow:0 8px 0 #907000;}
+.btn-p:active{transform:translateY(3px);box-shadow:0 2px 0 #907000;}
+
+/* ── NAME INPUT ── */
+#name-screen{position:fixed;inset:0;z-index:490;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(8px);}
+#name-screen.show{display:flex;}
+.name-box{
+  background:linear-gradient(145deg,#6b22c0,#8b35e8 50%,#7020b0);
+  border:3px solid rgba(255,255,255,.25);border-radius:28px;padding:32px 40px;text-align:center;max-width:400px;width:90%;
+  box-shadow:0 8px 0 #35108a,0 14px 50px rgba(0,0,0,.6);}
+.name-box h2{font-family:'Jaro',sans-serif;font-size:24px;color:#fff;margin-bottom:18px;text-shadow:2px 2px 0 rgba(0,0,0,.3);}
+.name-input-row{display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+.moto-ico{font-size:26px;width:36px;text-align:center;}
+.name-input-row input{
+  flex:1;border:2px solid rgba(255,255,255,.3);border-radius:12px;padding:9px 14px;
+  font-family:'Jaro',sans-serif;font-size:15px;color:#fff;
+  background:rgba(255,255,255,.15);outline:none;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.2);
+}
+.name-input-row input::placeholder{color:rgba(255,255,255,.4);}
+.name-input-row input:focus{border-color:rgba(255,200,0,.7);box-shadow:0 0 0 2px rgba(255,220,0,.25),inset 0 2px 4px rgba(0,0,0,.2);}
+
+/* ── WINNER ── */
+#winner-overlay{position:fixed;inset:0;z-index:600;
+  background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(10px);}
+#winner-overlay.show{display:flex;}
+.winner-box{
+  background:linear-gradient(145deg,#806000,#c09010 40%,#a07000);
+  border:3px solid rgba(255,255,255,.3);border-radius:32px;padding:38px 50px;text-align:center;max-width:460px;
+  box-shadow:0 10px 0 #503000,0 20px 60px rgba(0,0,0,.65);animation:mPop .55s cubic-bezier(.34,1.56,.64,1);}
+.winner-box h1{font-family:'Jaro',sans-serif;font-size:46px;color:#fff;margin:10px 0 4px;text-shadow:3px 4px 0 rgba(0,0,0,.3);}
+.winner-box p{font-family:'Jaro',sans-serif;font-size:14px;color:rgba(255,255,255,.8);margin-bottom:18px;}
+.score-table{background:rgba(0,0,0,.25);border-radius:14px;padding:12px 16px;
+  margin-bottom:18px;text-align:left;border:1.5px solid rgba(255,255,255,.15);}
+.score-row{display:flex;justify-content:space-between;align-items:center;
+  padding:5px 0;font-weight:900;color:#fff;font-size:13px;}
+.score-row span:last-child{font-family:'Jaro',sans-serif;font-size:16px;color:#ffe135;text-shadow:1px 1px 0 rgba(0,0,0,.3);}
+
+/* rules popup */
+#rules-overlay{display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,.72);align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+#rules-overlay.show{display:flex;}
+.rules-box{
+  background:linear-gradient(145deg,#5a1fa8,#7b2fcf 50%,#6020b0);
+  border:3px solid rgba(255,255,255,.2);border-radius:24px;padding:26px 32px;max-width:400px;width:90%;
+  box-shadow:0 8px 0 #2a0870,0 14px 48px rgba(0,0,0,.6);max-height:80vh;overflow-y:auto;}
+.rules-box h2{font-family:'Jaro',sans-serif;font-size:22px;color:#fff;margin-bottom:14px;text-shadow:2px 2px 0 rgba(0,0,0,.3);}
+.rules-box p{font-size:12px;color:rgba(255,255,255,.85);line-height:1.65;margin-bottom:9px;font-weight:700;}
+.rules-box strong{color:#ffe135;}
+
+.nav-audio{display:flex;align-items:center;gap:8px;}
+#btn-audio-toggle{background:linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.08));border:1.5px solid rgba(255,255,255,.35);color:#fff;border-radius:14px;padding:6px 10px;font-size:14px;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.25);transition:transform .1s,box-shadow .1s;text-shadow:0 1px 2px rgba(0,0,0,.3);}
+#btn-audio-toggle:hover{transform:translateY(-1px);background:rgba(255,255,255,.28);}
+#volume-slider{width:100px;cursor:pointer;accent-color:#ffd700;}
+
+/* ── PARTICLES ── */
+.confetti{position:fixed;pointer-events:none;z-index:350;border-radius:2px;animation:cFall var(--dur) ease-in forwards;}
+@keyframes cFall{0%{transform:translate(0,0) rotate(0);opacity:1;}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0;}}
+.float-e{position:fixed;pointer-events:none;z-index:350;font-size:17px;animation:fUp .9s ease-out forwards;}
+@keyframes fUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-65px) scale(.6);}}
+
+/* ── Mejor legibilidad y objetos más grandes ── */
+html,body{font-size:16px;line-height:1.45;}
+#navbar{height:64px;padding:0 20px;}
+.nav-logo{font-size:22px;}
+.nav-logo-moto{font-size:28px;}
+.nav-pill, .nav-turn-pill{padding:7px 14px;font-size:13px;}
+.nav-pill .label{font-size:11px;}
+#btn-rules,#btn-end{padding:8px 16px;font-size:14px;}
+#game{grid-template-columns:220px 1fr 220px;}
+#panel-left,#panel-right{padding:10px 12px;}
+.tile-icon-wrap{font-size:22px;}
+.tile-label{font-size:7px;}
+.tile-corner .tile-icon-wrap{font-size:26px;}
+.tile-corner .tile-label{font-size:7.5px;}
+.p-card-hdr{height:48px;padding:0 14px;gap:10px;}
+.p-avatar{width:32px;height:30px;}
+.p-name{font-size:16px;}
+.stat{font-size:11px;}
+.stat-val{font-size:16px;}
+.gas-bar{height:10px;}
+.upg-title{font-size:9px;}
+.upg-item{font-size:10px;padding:4px 6px;}
+.btn-p{padding:14px 24px;font-size:20px;}
+.name-box{padding:40px 48px;max-width:520px;}
+.name-box h2{font-size:26px;margin-bottom:20px;}
+.name-input-row{gap:12px;margin-bottom:14px;}
+.name-input-row input{padding:11px 16px;font-size:16px;}
+.winner-box{padding:44px 56px;max-width:520px;}
+.winner-box h1{font-size:50px;}
+.winner-box p{font-size:16px;margin-bottom:20px;}
+.score-table{padding:14px 18px;}
+.score-row{font-size:14px;}
+.score-row span:last-child{font-size:18px;}
+.rules-box{padding:30px 36px;max-width:520px;}
+.rules-box h2{font-size:24px;margin-bottom:16px;}
+.rules-box p{font-size:14px;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<div id="bg"></div>
+<div id="bg-ov"></div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-logo">
+    <span class="nav-logo-moto">🛵</span>
+    El Rey del Rebusque
+  </div>
+  <div class="nav-center">
+    <div class="nav-pill"><span class="label">TURNO</span> #<span id="turn-counter">0</span></div>
+    <div class="nav-turn-pill">▶ <span id="nav-turn-name">—</span></div>
+    <div class="nav-pill"><span class="label">EN JUEGO</span> $<span id="nav-pot">0</span></div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-audio">
+      <button id="btn-audio-toggle" onclick="toggleMusic()" title="Música Diomedes Díaz">🔊</button>
+      <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.65" title="Volumen" />
+    </div>
+    <button id="btn-rules" onclick="showRules()">📋 Reglas</button>
+    <button id="btn-end" onclick="endGameNow()">🏁 Finalizar</button>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div id="game">
+  <div id="panel-left"></div>
+  <div id="board-area">
+    <div id="board-scene">
+      <div id="board-shadow"></div>
+      <div id="board-iso">
+        <div id="board-base"></div>
+        <div id="board-center">
+          <div id="center-logo">
+            <div style="font-family:'Jaro',sans-serif;line-height:1.05">
+              <span class="cl-el"></span>
+              <span class="cl-rey"></span>
+              <span class="cl-del"></span>
+              <span class="cl-reb"></span>
+            </div>
+            <span class="cl-sub">🎺 Valledupar 🛵</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="panel-right"></div>
+</div>
+
+<!-- Bottom bar -->
+<div id="bottom-bar">
+  <div id="dice-box">🎲</div>
+  <div id="turn-badge-bot">Turno: —</div>
+  <button id="btn-roll" onclick="rollDice()">🎲 Tirar Dado</button>
+</div>
+
+<!-- Modal -->
+<div id="overlay">
+  <div class="modal" id="modal">
+    <span id="modal-icon">🃏</span>
+    <div id="modal-title">AZAR</div>
+    <div id="modal-tipo" style="display:none"></div>
+    <div id="modal-text"></div>
+    <div id="modal-effect" style="display:none"></div>
+    <div id="shop-area"></div>
+    <button class="btn-ok" onclick="closeModal()">¡Listo! Continuar</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Start -->
+<div id="start-screen">
+  <div class="start-box">
+    <div style="font-size:52px;margin-bottom:5px">🛵</div>
+    <div class="start-title">Bienvenido a</div>
+    <div class="start-logo">
+      <span class="s-el">El</span><span class="s-rey">Rey</span>
+      <span class="s-del">del</span><span class="s-reb">Rebusque</span>
+    </div>
+    <div class="start-sub">El juego de mototaxis de Valledupar 🎺</div>
+    <div class="start-hint">¿Cuántos mototaxistas compiten hoy?</div>
+    <div class="player-btns">
+      <button class="btn-p" onclick="askNames(2)">2</button>
+      <button class="btn-p" onclick="askNames(3)">3</button>
+      <button class="btn-p" onclick="askNames(4)">4</button>
+    </div>
+  </div>
+</div>
+
+<!-- Name input -->
+<div id="name-screen">
+  <div class="name-box">
+    <h2>🏍️ Ponle nombre a tu moto</h2>
+    <div id="name-inputs"></div>
+    <button class="btn-ok" style="margin-top:12px" onclick="startWithNames()">¡A rodar! 🛵</button>
+  </div>
+</div>
+
+<!-- Winner -->
+<div id="winner-overlay">
+  <div class="winner-box">
+    <div style="font-size:60px">🏆</div>
+    <h1 id="winner-name">¡El Rey!</h1>
+    <p id="winner-sub">Acumuló más plata que nadie</p>
+    <div class="score-table" id="score-table"></div>
+    <button class="btn-ok" onclick="location.reload()">🔄 Nueva Partida</button>
+  </div>
+</div>
+
+<!-- Rules -->
+<div id="rules-overlay">
+  <div class="rules-box">
+    <h2>📋 Reglas Rápidas</h2>
+    <p><strong>🎯 Objetivo:</strong> Acumular más dinero al finalizar. Gana quien tenga más $.</p>
+    <p><strong>🎲 Turno:</strong> Tira el dado y avanza las casillas indicadas.</p>
+    <p><strong>🏠 SALIDA:</strong> Al pasar recibe +$2.000 / -1G.</p>
+    <p><strong>🛣️ CARRERA:</strong> Saca una carta de destino. Versión Responsable gana más.</p>
+    <p><strong>❓ AZAR:</strong> Carta sorpresa — puede ser buena o mala.</p>
+    <p><strong>⭐ MEJORA:</strong> Compra mejoras permanentes para tu moto.</p>
+    <p><strong>🔧 PINCHAZO:</strong> -$2.000 y -1G (Mantenimiento te salva).</p>
+    <p><strong>🚦 TRANCÓN:</strong> Pierdes el próximo turno.</p>
+    <p><strong>🚨 RETÉN:</strong> Pagas el 50% de tu plata (Papeles al Día te salva).</p>
+    <p><strong>🎯 Objetivo:</strong> Ganar la mayor cantidad de dinero antes de quedar sin gasolina o sin plata.</p>
+    <p><strong>🎲 Turno:</strong> Lanza el dado y avanza. Aplica la acción de la casilla donde caes.</p>
+    <p><strong>🏠 SALIDA:</strong> Cada vez que pasas, cobras +$2.000 y recuperas +1G de gasolina.</p>
+    <p><strong>🛣️ CARRERA:</strong> Haz una carrera y gana plata — pero gasta gasolina.</p>
+    <p><strong>❓ AZAR:</strong> Carta sorpresa — puede ser buena o mala.</p>
+    <p><strong>⭐ MEJORA:</strong> Compra mejoras permanentes para tu moto.</p>
+    <p><strong>🔧 PINCHAZO:</strong> -$2.000 y -1G (Mantenimiento te salva).</p>
+    <p><strong>🚦 TRANCÓN:</strong> Pierdes el próximo turno.</p>
+    <p><strong>🚨 RETÉN:</strong> Pagas el 50% de tu plata (Papeles al Día te salva).</p>
+    <p><strong>⛽ Gasolina:</strong> Va de 0 a 10G. Si llegas a 0G ¡quedas eliminado de la vía!</p>
+    <p><strong>💀 Eliminación:</strong> Gas=0 o plata=0 te elimina. Al final gana quien tenga MÁS DINERO.</p>
+    <p><strong>🏍️ Mejoras:</strong> Casco (-1G/carrera) · Papeles (inmune retén +$1K) · Mantenimiento (inmune pinchazo +2G) · App (ignora multas).</p>
+    <button class="btn-ok" style="margin-top:12px" onclick="closeRules()">Entendido ✓</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════
+//  CONSTANTES TABLERO
+// ══════════════════════
+const BOARD=[
+  {t:'casa',      icon:'🏠',label:'SALIDA\n+$2K',        band:'band-gold',  corner:true},   //0
+  {t:'carrera',   icon:'🛣️',label:'CARRERA\nNOVENA',     band:'band-green', corner:false},  //1
+  {t:'azar',      icon:'❓',label:'AZAR',                 band:'band-orange',corner:false},  //2
+  {t:'mejora',    icon:'⭐',label:'MEJORA',               band:'band-purple',corner:false},  //3
+  {t:'pinchazo',  icon:'🔧',label:'PINCHAZO',             band:'band-red',   corner:false},  //4
+  {t:'carrera',   icon:'🛣️',label:'CARRERA\nCENTRO',     band:'band-green', corner:false},  //5
+  {t:'azar',      icon:'❓',label:'AZAR',                 band:'band-orange',corner:false},  //6
+  {t:'mejora',    icon:'⭐',label:'MEJORA',               band:'band-purple',corner:false},  //7
+  {t:'trancon',   icon:'🚦',label:'TRANCÓN',              band:'band-blue',  corner:false},  //8
+  {t:'plaza',     icon:'🌆',label:'PLAZA\nALFONSO\nLÓPEZ',band:'band-gold', corner:true},   //9
+
+  {t:'carrera',   icon:'🛣️',label:'CARRERA\nGUATAPURÍ',  band:'band-green', corner:false},  //10
+  {t:'azar',      icon:'❓',label:'AZAR',                 band:'band-orange',corner:false},  //11
+  {t:'mejora',    icon:'⭐',label:'MEJORA',               band:'band-purple',corner:false},  //12
+  {t:'hospital',  icon:'🏥',label:'HOSPITAL\nCARRERA',   band:'band-teal',  corner:false},  //13
+  {t:'azar',      icon:'❓',label:'AZAR',                 band:'band-orange',corner:false},  //14
+  {t:'pinchazo',  icon:'🔧',label:'PINCHAZO',             band:'band-red',   corner:false},  //15
+  {t:'carrera',   icon:'🛣️',label:'CARRERA\nRÍO',        band:'band-green', corner:false},  //16
+  {t:'azar',      icon:'❓',label:'AZAR',                 band:'band-orange',corner:false},  //17
+
+  {t:'reten',     icon:'🚨',label:'RETÉN\nLA CEIBA',     band:'band-gold',  corner:true},   //18
+  {t:'mejora',    icon:'⭐',label:'MEJORA',               band:'band-purple',corner:false},  //19
+  {t:'balneario', icon:'🏖️',label:'BALNEARIO\nHURTADO', band:'band-teal',  corner:false},  //20
+  {t:'azar',      icon:'❓',label:'AZAR',                 band:'band-orange',corner:false},  //21
+  {t:'carrera',   icon:'🛣️',label:'CARRERA\nGUATAPURÍ', band:'band-green', corner:false},  //22
+  {t:'mejora',    icon:'⭐',label:'MEJORA',               band:'band-purple',corner:false},  //23
+  {t:'guatapuri', icon:'🛍️',label:'C.C.\nGUATAPURÍ',    band:'band-pink',  corner:false},  //24
+  {t:'azar',      icon:'❓',label:'AZAR',                 band:'band-orange',corner:false},  //25
+  {t:'trancon',   icon:'🚦',label:'TRANCÓN\nNOVENA',     band:'band-blue',  corner:false},  //26
+  {t:'pilonera',  icon:'🥁',label:'PILONERA\nMAYOR',     band:'band-gold',  corner:true},   //27
+
+  {t:'carrera',   icon:'🛣️',label:'VALLEDUPAR\nCARRERA', band:'band-lime',  corner:false},  //28
+  {t:'azar',      icon:'❓',label:'AZAR',                 band:'band-orange',corner:false},  //29
+  {t:'mejora',    icon:'⭐',label:'MEJORA',               band:'band-purple',corner:false},  //30
+  {t:'pinchazo',  icon:'🔧',label:'PINCHAZO',             band:'band-red',   corner:false},  //31
+  {t:'carrera',   icon:'🛣️',label:'CARRERA\nSIERRA',     band:'band-lime',  corner:false},  //32
+  {t:'azar',      icon:'❓',label:'AZAR',                 band:'band-orange',corner:false},  //33
+  {t:'mejora',    icon:'⭐',label:'MEJORA',               band:'band-purple',corner:false},  //34
+  {t:'trancon',   icon:'🚦',label:'TRANCÓN\nRINGLETE',   band:'band-blue',  corner:false},  //35
+];
+
+const TOTAL=BOARD.length; // 36
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const masterGain = audioCtx.createGain();
+masterGain.gain.value = 0.32;
+masterGain.connect(audioCtx.destination);
+let currentVolume = 0.65;
+let ambientPlaying = false;
+let ambientTimer = null;
+
+function unlockAudio(){
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function createTone(freq, type='sine', duration=0.18, gainValue=0.16, pan=0){
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const panNode = audioCtx.createStereoPanner();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gain.gain.setValueAtTime(gainValue, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.connect(gain).connect(panNode).connect(masterGain);
+  panNode.pan.value = pan;
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function createNoise(duration=0.08, gainValue=0.12){
+  const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * duration, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.35;
+  const src = audioCtx.createBufferSource();
+  const gain = audioCtx.createGain();
+  src.buffer = buffer;
+  gain.gain.setValueAtTime(gainValue, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  src.connect(gain).connect(masterGain);
+  src.start();
+}
+
+function createSweep(start, end, duration=0.35, gainValue=0.16, type='sawtooth'){
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(start, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(end, audioCtx.currentTime + duration);
+  gain.gain.setValueAtTime(gainValue, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.connect(gain).connect(masterGain);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function scheduleAmbient(){
+  const now = audioCtx.currentTime + 0.05;
+  const pattern = [262, 294, 330, 349, 330, 294, 262];
+  pattern.forEach((freq, i) => {
+    const start = now + i * 0.32;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = i % 2 === 0 ? 'triangle' : 'square';
+    osc.frequency.setValueAtTime(freq, start);
+    gain.gain.setValueAtTime(0.11, start);
+    gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+    osc.connect(gain).connect(masterGain);
+    osc.start(start);
+    osc.stop(start + 0.5);
+  });
+
+  const bass = [110, 110, 98, 98];
+  bass.forEach((freq, i) => {
+    const start = now + i * 0.75;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(freq, start);
+    gain.gain.setValueAtTime(0.065, start);
+    gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+    osc.connect(gain).connect(masterGain);
+    osc.start(start);
+    osc.stop(start + 0.5);
+  });
+
+  setTimeout(() => createNoise(0.08, 0.08), 180);
+}
+
+function playSound(name){
+  unlockAudio();
+  switch(name){
+    case 'click':
+      createTone(900, 'square', 0.08, 0.18, 0);
+      createNoise(0.06, 0.08);
+      break;
+    case 'dice':
+      createSweep(1800, 220, 0.28, 0.16, 'sawtooth');
+      createNoise(0.28, 0.14);
+      setTimeout(()=>createTone(950, 'triangle', 0.08, 0.1, 0), 160);
+      break;
+    case 'move':
+      createTone(520, 'triangle', 0.09, 0.14, -0.15);
+      break;
+    case 'success':
+      createTone(880, 'triangle', 0.14, 0.18, 0.2);
+      setTimeout(()=>createTone(1040, 'sine', 0.12, 0.14, -0.2), 90);
+      break;
+    case 'error':
+      createTone(220, 'sine', 0.22, 0.18, 0);
+      createNoise(0.06, 0.1);
+      break;
+    case 'modal':
+      createTone(720, 'triangle', 0.14, 0.16, 0);
+      createNoise(0.05, 0.06);
+      break;
+    case 'win':
+      createTone(700, 'triangle', 0.16, 0.16, -0.3);
+      setTimeout(()=>createTone(920, 'triangle', 0.16, 0.16, 0.3), 120);
+      setTimeout(()=>createTone(1160, 'triangle', 0.16, 0.16, 0), 240);
+      break;
+  }
+}
+
+function startAmbient(){
+  if(ambientPlaying) return;
+  unlockAudio();
+  ambientPlaying = true;
+  scheduleAmbient();
+  ambientTimer = setInterval(scheduleAmbient, 2200);
+  toast('🎶 Vallenato ambiente encendido');
+  updateAudioButton();
+}
+
+function stopAmbient(){
+  if(!ambientPlaying) return;
+  ambientPlaying = false;
+  if(ambientTimer){
+    clearInterval(ambientTimer);
+    ambientTimer = null;
+  }
+  toast('🔇 Música apagada');
+  updateAudioButton();
+}
+
+function updateAudioButton(){
+  const btn=document.getElementById('btn-audio-toggle');
+  if(!btn) return;
+  btn.textContent = ambientPlaying ? '🔊 Diomedes' : '🔇 Diomedes';
+  btn.classList.toggle('active', ambientPlaying);
+  document.body.classList.toggle('music-active', ambientPlaying);
+}
+
+function toggleMusic(){
+  playSound('click');
+  if(ambientPlaying){
+    stopAmbient();
+  } else {
+    startAmbient();
+  }
+}
+
+function rumbleScreen(){
+  document.body.classList.add('screen-rumble');
+  setTimeout(()=>document.body.classList.remove('screen-rumble'), 360);
+}
+
+function setMusicVolume(value){
+  const slider=document.getElementById('volume-slider');
+  if(slider){ slider.value = value; }
+  currentVolume = Number(value);
+  masterGain.gain.value = currentVolume * 0.42;
+}
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  const slider=document.getElementById('volume-slider');
+  if(slider){
+    slider.value = currentVolume;
+    slider.addEventListener('input', ()=> setMusicVolume(slider.value));
+  }
+  updateAudioButton();
+});
+
+// Layout: 10 top (0-9), 8 right (10-17), 10 bottom (18-27), 8 left (28-35)
+let TW=70,TH=70;
+function tileXY(i){
+  if(i<=9)  return {x:i*TW,       y:0};
+  if(i<=17) return {x:9*TW,       y:(i-9)*TH};
+  if(i<=27) return {x:(27-i)*TW,  y:9*TH};
+  return          {x:0,           y:(9-(i-27))*TH};
+}
+
+// Board total size: 10*TW x 10*TH = 700x700 (base)
+// Scale to fit available space
+function calcScale(){
+  const ba=document.getElementById('board-area');
+  const aw=ba.clientWidth-20, ah=ba.clientHeight-20;
+  const bw=10*TW, bh=10*TH;
+  // isometric view: rotateX(50) rotateZ(-45) makes it appear ~70% width, ~50% height of actual
+  // We need the rendered size to fit. After rotation the bounding box is roughly:
+  // width  ≈ bw * cos(45°) * 2 ≈ bw * 1.0  (diagonal)
+  // height ≈ bw * sin(50°) ≈ bw * 0.77
+  const rendW = bw * Math.sqrt(2);
+  const rendH = bw * Math.sqrt(2) * Math.sin(50*Math.PI/180);
+  const s = Math.min(aw/rendW, ah/rendH, 1.0);
+  return s;
+}
+
+// ══════════════════════
+//  MOTO NAMES & COLORS
+// ══════════════════════
+const MOTO_NAMES_DEFAULT=['Bajaj Boxer','AKT NKD','TVS Sport','Bajaj Platina'];
+const P_FILLS =['#e06820','#9b5fcf','#1e8fd0','#c02810'];
+const P_SHADES=['#803010','#5a1f80','#0a4870','#700808'];
+// Vibrant card gradients matching screenshot aesthetic
+const P_CARD_BG=[
+  'linear-gradient(145deg,#d05010,#e06820 50%,#b04010)',   // orange
+  'linear-gradient(145deg,#6b22c0,#8b35e8 50%,#7020b0)',   // purple
+  'linear-gradient(145deg,#1060c0,#2080e0 50%,#0848a0)',   // blue
+  'linear-gradient(145deg,#b01010,#d03030 50%,#900808)',   // red
+];
+const P_SHADOW=['#803010','#35108a','#042060','#600000'];
+const P_HDR_BG=[
+  'linear-gradient(135deg,#ff8030,#c05010)',
+  'linear-gradient(135deg,#9b5fcf,#5a1f80)',
+  'linear-gradient(135deg,#2090e0,#0848a0)',
+  'linear-gradient(135deg,#d02020,#800808)',
+];
+const MOTO_ICONS=['🛵','🏍️','🛺','🚗'];
+const DICE_FACES=['⚀','⚁','⚂','⚃','⚄','⚅'];
+const MOTO_OFF=[{dx:2,dy:2},{dx:26,dy:2},{dx:2,dy:26},{dx:26,dy:26}];
+
+const UPG_DEFS=[
+  {id:'casco',  icon:'⛑️',label:'Casco',  cls:'ul-casco'},
+  {id:'papeles',icon:'📄',label:'Papeles',cls:'ul-papeles'},
+  {id:'manten', icon:'🔧',label:'Taller', cls:'ul-manten'},
+  {id:'app',    icon:'📱',label:'App',    cls:'ul-app'},
+];
+
+// ══════════════════════
+//  CARDS
+// ══════════════════════
+const AZAR=[
+  {icon:'💰',t:'Cliente Generoso',   txt:'¡Qué buena propina!',              $:5000,g:0, skip:false,neg:false,reten:false},
+  {icon:'📋',t:'Multa en la Novena', txt:'¡Me pillaron mal parqueado!',       $:-2000,g:0,skip:false,neg:true, reten:false},
+  {icon:'👥',t:'Carrera Colectiva',  txt:'¡Dos conocidos pal mismo lado!',    $:3000,g:0, skip:false,neg:false,reten:false},
+  {icon:'⛽',t:'Tanqueo Full',       txt:'¡Estación con buen precio!',        $:0,g:3,    skip:false,neg:false,reten:false},
+  {icon:'🌧️',t:'Aguacero Vallenato',txt:'¡Se vino el agua! Mejor espero.',  $:0,g:0,    skip:true, neg:false,reten:false},
+  {icon:'🚨',t:'Retén Sorpresa',    txt:'¡El retén! O pago o pierdo la moto.',$:0,g:0,   skip:false,neg:true, reten:true},
+  {icon:'📅',t:'Día sin Moto',      txt:'Decretaron día sin moto.',           $:1000,g:0, skip:true, neg:false,reten:false},
+  {icon:'💍',t:'Carrera Especial',  txt:'¡Novia apurada a su boda!',         $:4000,g:0, skip:false,neg:false,reten:false},
+  {icon:'🤝',t:'Desvare de Colega', txt:'Empujé la moto de un compañero.',   $:1000,g:-1,skip:false,neg:false,reten:false},
+  {icon:'⛓️',t:'Cadena Suelta',     txt:'¡Toca tensionar la cadena!',        $:0,g:-1,   skip:false,neg:false,reten:false},
+  {icon:'🕵️',t:'Pasajero Culebrero',txt:'¡No pagó completo!',               $:-1000,g:0,skip:false,neg:true, reten:false},
+  {icon:'👴',t:'Carrera por la Paz',txt:'Abuelito gratis al hospital.',      $:0,g:2,    skip:false,neg:false,reten:false},
+];
+
+const CARRERAS=[
+  {icon:'🏥',dest:'Hospitalito',        tipo:'Imprudente', $:3000,g:-1,txt:'Me metí en contravía por el afán.'},
+  {icon:'🏥',dest:'Hospitalito',        tipo:'Responsable',$:4000,g:-1,txt:'Manejé con cuidado y respeté las cebras.'},
+  {icon:'🏙️',dest:'El Centro',         tipo:'Imprudente', $:4500,g:-3,txt:'Casi me llevo un espejo zigzagueando.'},
+  {icon:'🏙️',dest:'El Centro',         tipo:'Responsable',$:5500,g:-3,txt:'¡Conductor ejemplar! El cliente me felicitó.'},
+  {icon:'🌆',dest:'Plaza Alfonso López',tipo:'Imprudente', $:6000,g:-5,txt:'Me pasé el semáforo en amarillo.'},
+  {icon:'🌆',dest:'Plaza Alfonso López',tipo:'Responsable',$:7500,g:-5,txt:'Frené en cada esquina; la seguridad es primero.'},
+  {icon:'🛍️',dest:'C.C. Guatapurí',   tipo:'Imprudente', $:3000,g:-2,txt:'Llevé al cliente muy asustado.'},
+  {icon:'🛍️',dest:'C.C. Guatapurí',   tipo:'Responsable',$:4000,g:-2,txt:'Servicio de lujo y manejo suave.'},
+  {icon:'🏖️',dest:'Balneario Hurtado', tipo:'Imprudente', $:4000,g:-3,txt:'Me fui pitándole a todo el mundo.'},
+  {icon:'🏖️',dest:'Balneario Hurtado', tipo:'Responsable',$:5000,g:-3,txt:'Manejé disfrutando la brisa.'},
+  {icon:'🥁',dest:'La Pilonera Mayor',  tipo:'Imprudente', $:3000,g:-2,txt:'Me subí al andén para saltarme el trancón.'},
+  {icon:'🥁',dest:'La Pilonera Mayor',  tipo:'Responsable',$:4000,g:-2,txt:'Dando el ejemplo de buen vallenato.'},
+  {icon:'🎺',dest:'Valledupar',         tipo:'Imprudente', $:3000,g:-1,txt:'Corrí por el carreón.'},
+  {icon:'🎺',dest:'Valledupar',         tipo:'Responsable',$:4500,g:-1,txt:'Disfruté el trayecto con vallenato de fondo.'},
+];
+
+const MEJORAS=[
+  {id:'casco',  icon:'⛑️',name:'Casco Reglamentario',   desc:'-1G por carrera.',          cost:2000},
+  {id:'papeles',icon:'📄',name:'Papeles al Día',         desc:'Inmune retenes. +$1K/carr.',cost:3000},
+  {id:'manten', icon:'🔧',name:'Mantenimiento',          desc:'Inmune pinchazos. +2G.',    cost:2000},
+  {id:'app',    icon:'📱',name:'App de Transporte',      desc:'Ignora cartas negativas.',  cost:2000},
+];
+
+// ══════════════════════
+//  3D ICON URLS — free PNG icons from open CDN sources
+// ══════════════════════
+// Player moto icons: colorful 3D motorcycle PNGs
+// Using emoji-style 3D icons from public sources
+const MOTO_3D_COLORS=['#e06820','#9b5fcf','#1e8fd0','#c02810'];
+const MOTO_3D_LABELS=['🟠','🟣','🔵','🔴'];
+
+// Board icon mapping: tile type → 3D PNG URL (Google's Noto emoji 3D / OpenMoji 3D)
+// Using Noto Emoji which has high-quality rendered versions
+const ICON_3D = {
+  // Tile icons - using high-res Noto/OpenMoji 3D renders
+  '🏠': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f3e0/emoji.svg',
+  '🛣️': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6e3/emoji.svg',
+  '❓': 'https://fonts.gstatic.com/s/e/notoemoji/latest/2753/emoji.svg',
+  '⭐': 'https://fonts.gstatic.com/s/e/notoemoji/latest/2b50/emoji.svg',
+  '🔧': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f527/emoji.svg',
+  '🚦': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a6/emoji.svg',
+  '🚨': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a8/emoji.svg',
+  '🌆': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f306/emoji.svg',
+  '🏥': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f3e5/emoji.svg',
+  '🥁': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1fa98/emoji.svg',
+  '🏖️': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f3d6/emoji.svg',
+  '🛍️': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6cd/emoji.svg',
+  '🛵': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6f5/emoji.svg',
+  '🏍️': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f3cd/emoji.svg',
+  '🛺': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f6fa/emoji.svg',
+  '🏆': 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f3c6/emoji.svg',
+};
+
+function get3DIcon(emoji, size=20){
+  const url=ICON_3D[emoji];
+  if(url) return `<img src="${url}" width="${size}" height="${size}" style="image-rendering:crisp-edges;filter:drop-shadow(1px 2px 3px rgba(0,0,0,0.35))" onerror="this.style.display='none';this.nextSibling.style.display='inline'"/><span style="display:none;font-size:${size*0.7}px">${emoji}</span>`;
+  return `<span style="font-size:${size*0.7}px">${emoji}</span>`;
+}
+
+// ══════════════════════
+//  MOTO 3D — SVG detallado con gradientes (funciona offline)
+// ══════════════════════
+function motoSVG(fill, shade, small=false){
+  const w=small?40:54, h=small?38:52;
+  const light=lightenColor(fill,40);
+  const dark=darkenColor(fill,30);
+  const uid=fill.replace('#','');
+  return`<svg viewBox="0 0 56 54" xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
+  <defs>
+    <radialGradient id="wh${uid}" cx="40%" cy="35%">
+      <stop offset="0%" stop-color="#777"/>
+      <stop offset="100%" stop-color="#111"/>
+    </radialGradient>
+    <linearGradient id="bd${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${light}"/>
+      <stop offset="55%" stop-color="${fill}"/>
+      <stop offset="100%" stop-color="${dark}"/>
+    </linearGradient>
+    <linearGradient id="whl${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#888"/>
+      <stop offset="100%" stop-color="#222"/>
+    </linearGradient>
+  </defs>
+  <!-- shadow -->
+  <ellipse cx="28" cy="51" rx="22" ry="3.5" fill="${shade}" opacity="0.3"/>
+  <!-- rear wheel -->
+  <circle cx="10" cy="39" r="9.5" fill="url(#whl${uid})" stroke="#333" stroke-width="1.5"/>
+  <circle cx="10" cy="39" r="5.5" fill="#1a1a1a"/>
+  <circle cx="10" cy="39" r="2.5" fill="#444"/>
+  <circle cx="10" cy="39" r="1" fill="#bbb"/>
+  <line x1="10" y1="29.5" x2="10" y2="48.5" stroke="#555" stroke-width="0.7"/>
+  <line x1="0.5" y1="39" x2="19.5" y2="39" stroke="#555" stroke-width="0.7"/>
+  <line x1="3" y1="32" x2="17" y2="46" stroke="#555" stroke-width="0.7"/>
+  <line x1="3" y1="46" x2="17" y2="32" stroke="#555" stroke-width="0.7"/>
+  <!-- front wheel -->
+  <circle cx="46" cy="40" r="8.5" fill="url(#whl${uid})" stroke="#333" stroke-width="1.5"/>
+  <circle cx="46" cy="40" r="5" fill="#1a1a1a"/>
+  <circle cx="46" cy="40" r="2" fill="#444"/>
+  <circle cx="46" cy="40" r="0.8" fill="#bbb"/>
+  <line x1="46" y1="31.5" x2="46" y2="48.5" stroke="#555" stroke-width="0.7"/>
+  <line x1="37.5" y1="40" x2="54.5" y2="40" stroke="#555" stroke-width="0.7"/>
+  <line x1="40" y1="33.5" x2="52" y2="46.5" stroke="#555" stroke-width="0.7"/>
+  <line x1="40" y1="46.5" x2="52" y2="33.5" stroke="#555" stroke-width="0.7"/>
+  <!-- swingarm -->
+  <path d="M12 37 Q26 32 40 38" stroke="${dark}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- exhaust -->
+  <path d="M11 37 Q7 43 4 40 Q2 39 3 37" stroke="#777" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <ellipse cx="3.5" cy="38.5" rx="1.5" ry="1" fill="#555"/>
+  <!-- main body frame -->
+  <path d="M11 36 L21 19 L38 17 L50 31 L42 38 Z" fill="url(#bd${uid})" stroke="${dark}" stroke-width="1.2"/>
+  <!-- engine block -->
+  <rect x="21" y="25" width="17" height="12" rx="3" fill="${dark}" opacity="0.7"/>
+  <rect x="23" y="27" width="13" height="8" rx="2" fill="${shade}" opacity="0.45"/>
+  <!-- cooling fins -->
+  <line x1="22" y1="29" x2="22" y2="36" stroke="rgba(0,0,0,.3)" stroke-width="1"/>
+  <line x1="25" y1="27" x2="25" y2="36.5" stroke="rgba(0,0,0,.3)" stroke-width="1"/>
+  <line x1="28" y1="26.5" x2="28" y2="36.5" stroke="rgba(0,0,0,.3)" stroke-width="1"/>
+  <!-- seat -->
+  <path d="M21 19 L23 13 L37 12 L38 17 Z" fill="url(#bd${uid})"/>
+  <rect x="22" y="10" width="16" height="5" rx="2.5" fill="#111"/>
+  <rect x="23" y="10.5" width="14" height="2" rx="1" fill="#2a2a2a"/>
+  <!-- frame highlight -->
+  <path d="M22 20 L36 18" stroke="${light}" stroke-width="1.8" stroke-linecap="round" opacity="0.6"/>
+  <!-- front fork -->
+  <line x1="46" y1="17" x2="46" y2="32" stroke="#777" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- handlebar stem -->
+  <line x1="39" y1="19" x2="50" y2="14" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="47" y="11" width="8" height="3.5" rx="1.8" fill="#444"/>
+  <!-- headlight -->
+  <ellipse cx="50" cy="30" rx="4.5" ry="3.5" fill="#fff8c0" stroke="#ccc" stroke-width="0.5"/>
+  <ellipse cx="50" cy="30" rx="2.8" ry="2" fill="#fff" opacity="0.85"/>
+  <ellipse cx="49" cy="29" rx="1" ry="0.7" fill="#fff" opacity="0.5"/>
+  <!-- body shine -->
+  <path d="M22 21 L28 17 L33 17.5 L27 22 Z" fill="rgba(255,255,255,0.35)"/>
+  <path d="M37 18.5 L34 17 L35.5 20 L38.5 20.5 Z" fill="rgba(255,255,255,0.25)"/>
+  <!-- rider body -->
+  <ellipse cx="27" cy="13" rx="5.5" ry="6.5" fill="${fill}" stroke="${dark}" stroke-width="0.8"/>
+  <!-- rider arms to handlebar -->
+  <path d="M30 13 Q40 11 48 13.5" stroke="${fill}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- helmet -->
+  <circle cx="27" cy="8" r="6" fill="#111"/>
+  <path d="M21.5 7.5 Q27 3 32.5 7.5 Q31.5 13 27 13 Q22.5 13 21.5 7.5Z" fill="#1a1a1a"/>
+  <!-- visor -->
+  <path d="M22.5 7.5 Q27 5 31.5 7.5 Q30.5 11 27 11 Q23.5 11 22.5 7.5Z" fill="#44aaff" opacity="0.8"/>
+  <path d="M23.5 7.5 Q27 5.8 30.5 7.5" stroke="rgba(255,255,255,0.45)" stroke-width="1" fill="none"/>
+  <!-- helmet gloss -->
+  <ellipse cx="25" cy="5.5" rx="2" ry="1.2" fill="rgba(255,255,255,0.22)" transform="rotate(-15,25,5.5)"/>
+</svg>`;
+}
+
+function lightenColor(hex, amt){
+  const n=parseInt(hex.slice(1),16);
+  const r=Math.min(255,((n>>16)&0xff)+amt);
+  const g=Math.min(255,((n>>8)&0xff)+amt);
+  const b=Math.min(255,(n&0xff)+amt);
+  return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+function darkenColor(hex, amt){
+  const n=parseInt(hex.slice(1),16);
+  const r=Math.max(0,((n>>16)&0xff)-amt);
+  const g=Math.max(0,((n>>8)&0xff)-amt);
+  const b=Math.max(0,(n&0xff)-amt);
+  return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+// ══════════════════════
+//  GAME STATE
+// ══════════════════════
+let players=[],numPlayers=2,cur=0,rolling=false,pendCB=null,over=false,turnCount=0;
+let tempN=2;
+
+function askNames(n){
+  playSound('click');
+  tempN=n;
+  document.getElementById('start-screen').style.display='none';
+  const ns=document.getElementById('name-screen');
+  ns.classList.add('show');
+  const inp=document.getElementById('name-inputs');
+  inp.innerHTML='';
+  for(let i=0;i<n;i++){
+    inp.innerHTML+=`<div class="name-input-row">
+      <span class="moto-ico">${MOTO_ICONS[i]}</span>
+      <input id="ni${i}" type="text" placeholder="${MOTO_NAMES_DEFAULT[i]}" maxlength="18" value="${MOTO_NAMES_DEFAULT[i]}"/>
+    </div>`;
+  }
+}
+
+function startWithNames(){
+  playSound('success');
+  const names=[];
+  for(let i=0;i<tempN;i++){
+    const v=document.getElementById('ni'+i)?.value.trim();
+    names.push(v||MOTO_NAMES_DEFAULT[i]);
+  }
+  document.getElementById('name-screen').classList.remove('show');
+  initGame(tempN,names);
+}
+
+function initGame(n,names){
+  numPlayers=n; players=[]; over=false; turnCount=0;
+  for(let i=0;i<n;i++)
+    players.push({i,name:names[i],icon:MOTO_ICONS[i],pos:0,money:9000,gas:10,upg:[],skip:false,elim:false});
+  cur=0;
+  buildBoard(); buildPanels(); placeMotos(); updPanels(); setTurn();
+  document.getElementById('btn-roll').disabled=false;
+  updNavbar();
+}
+
+// ══════════════════════
+//  BOARD SIZE + BUILD
+// ══════════════════════
+function buildBoard(){
+  // Resize scene
+  const sc=document.getElementById('board-scene');
+  const iso=document.getElementById('board-iso');
+  iso.querySelectorAll('.tile,.moto-wrap').forEach(e=>e.remove());
+
+  const s=calcScale();
+  const bw=10*TW*s, bh=10*TH*s;
+  sc.style.width=bw+'px'; sc.style.height=bh+'px';
+  iso.style.width=(10*TW)+'px'; iso.style.height=(10*TH)+'px';
+  iso.style.transformOrigin='50% 50%';
+  iso.style.transform=`scale(${s}) rotateX(50deg) rotateZ(-45deg)`;
+
+  document.getElementById('board-base').style.width=(10*TW)+'px';
+  document.getElementById('board-base').style.height=(10*TH)+'px';
+
+  const bc=document.getElementById('board-center');
+  bc.style.left=TW+'px'; bc.style.top=TH+'px';
+  bc.style.width=(8*TW)+'px'; bc.style.height=(8*TH)+'px';
+
+  // logo font sizes
+  const f=TW/70;
+  document.querySelector('.cl-el').style.fontSize=(26*f)+'px';
+  document.querySelector('.cl-el').textContent='El';
+  document.querySelector('.cl-rey').style.fontSize=(42*f)+'px';
+  document.querySelector('.cl-rey').textContent='Rey';
+  document.querySelector('.cl-del').style.fontSize=(24*f)+'px';
+  document.querySelector('.cl-del').textContent='del';
+  document.querySelector('.cl-reb').style.fontSize=(36*f)+'px';
+  document.querySelector('.cl-reb').textContent='Rebusque';
+
+  BOARD.forEach((b,i)=>{
+    const {x,y}=tileXY(i);
+    const d=document.createElement('div');
+    d.className='tile'+(b.corner?' tile-corner':'');
+    d.id='t'+i;
+    d.style.cssText=`left:${x}px;top:${y}px;width:${TW}px;height:${TH}px;`;
+
+    let bStyle='position:absolute;top:0;left:0;right:0;height:18px;';
+    if(i>=10&&i<=17) bStyle='position:absolute;top:0;bottom:0;right:0;width:18px;height:100%;';
+    if(i>=18&&i<=27) bStyle='position:absolute;bottom:0;left:0;right:0;height:18px;width:100%;top:auto;';
+    if(i>=28)        bStyle='position:absolute;top:0;bottom:0;left:0;width:18px;height:100%;';
+
+    const lines=b.label.split('\n');
+    let iStyle='margin-top:15px;';
+    if(i>=10&&i<=17) iStyle='margin-top:4px;margin-right:16px;';
+    if(i>=18&&i<=27) iStyle='margin-top:4px;';
+    if(i>=28)        iStyle='margin-top:4px;margin-left:16px;';
+
+    d.innerHTML=`<div class="tile-band ${b.band}" style="${bStyle}"></div>
+      <div class="tile-icon-wrap" style="${iStyle}">${b.icon}</div>
+      <div class="tile-label">${lines.join('<br>')}</div>`;
+    iso.appendChild(d);
+  });
+}
+
+// ══════════════════════
+//  MOTOS
+// ══════════════════════
+function placeMotos(){
+  const iso=document.getElementById('board-iso');
+  iso.querySelectorAll('.moto-wrap').forEach(e=>e.remove());
+  players.forEach((p,i)=>{
+    if(p.elim)return;
+    const wrap=document.createElement('div');
+    wrap.className='moto-wrap'; wrap.id='mp'+i;
+    wrap.style.cssText=`position:absolute;width:${TW}px;height:${TH}px;z-index:25;pointer-events:none;
+      transition:left .4s cubic-bezier(.34,1.56,.64,1),top .4s cubic-bezier(.34,1.56,.64,1);`;
+    const svg=document.createElement('div');
+    svg.className='moto-svg'; svg.id='mps'+i;
+    svg.innerHTML=motoSVG(P_FILLS[i],P_SHADES[i]);
+    const badge=document.createElement('div');
+    badge.className='moto-badge'; badge.id='mpb'+i;
+    wrap.appendChild(svg); wrap.appendChild(badge);
+    iso.appendChild(wrap);
+    moveMoto(i,p.pos,false);
+  });
+}
+
+function moveMoto(pi,pos,anim){
+  const el=document.getElementById('mp'+pi); if(!el)return;
+  playSound('move');
+  const{x,y}=tileXY(pos);
+  const o=MOTO_OFF[pi%4];
+  el.style.left=(x+o.dx)+'px'; el.style.top=(y+o.dy)+'px';
+  const sv=document.getElementById('mps'+pi);
+  if(anim&&sv){sv.classList.remove('hop');void sv.offsetWidth;sv.classList.add('hop');}
+  const p=players[pi];
+  const badge=document.getElementById('mpb'+pi);
+  if(badge){badge.style.display=p.upg.length?'flex':'none';badge.textContent=p.upg.length;}
+}
+
+// ══════════════════════
+//  PANELS
+// ══════════════════════
+function buildPanels(){
+  ['panel-left','panel-right'].forEach(id=>document.getElementById(id).innerHTML='');
+  players.forEach((p,i)=>{
+    const c=document.createElement('div');
+    c.className='p-card'; c.id='pc'+i;
+    // Set colorful background per player
+    c.style.background=P_CARD_BG[i];
+    c.style.boxShadow=`0 6px 0 ${P_SHADOW[i]},0 8px 20px rgba(0,0,0,.4)`;
+    const upgHtml=UPG_DEFS.map(u=>`<div class="upg-item locked" id="ui${i}_${u.id}">
+      <span class="ui-ico">${u.icon}</span><span>${u.label}</span></div>`).join('');
+    c.innerHTML=`<div class="p-card-hdr" style="background:${P_HDR_BG[i]}" id="phdr${i}">
+        <svg class="p-avatar" viewBox="0 0 52 50">${motoSVG(P_FILLS[i],P_SHADES[i]).replace(/<svg[^>]*>/,'').replace('</svg>','')}</svg>
+        <span class="p-name">${p.icon} ${p.name}</span>
+      </div>
+      <div class="p-card-body">
+        <div class="stat"><span>💰 Plata</span><span class="stat-val" id="pm${i}">$9,000</span></div>
+        <div class="stat"><span>⛽ Gas</span><span class="stat-val" id="pg${i}">10G</span></div>
+        <div class="gas-bar"><div class="gas-fill" id="pgb${i}" style="width:100%"></div></div>
+        <div class="upg-sec">
+          <div class="upg-title">✦ Mejoras</div>
+          <div class="upg-grid" id="pub${i}">${upgHtml}</div>
+        </div>
+      </div>`;
+    document.getElementById(i<2?'panel-left':'panel-right').appendChild(c);
+  });
+}
+
+function updPanels(){
+  players.forEach((p,i)=>{
+    const c=document.getElementById('pc'+i); if(!c)return;
+    const active=i===cur&&!p.elim;
+    c.className='p-card'+(active?' p-card-active':'')+(p.elim?' p-card-elim':'');
+    c.style.background=P_CARD_BG[i];
+    c.style.boxShadow=active
+      ?`0 0 0 3px #ffe135,0 0 18px rgba(255,220,0,.5),0 6px 0 ${P_SHADOW[i]},0 8px 22px rgba(0,0,0,.4)`
+      :`0 6px 0 ${P_SHADOW[i]},0 8px 20px rgba(0,0,0,.4)`;
+    const hdr=document.getElementById('phdr'+i);
+    if(hdr){
+      let ta=hdr.querySelector('.turn-arr');
+      if(!ta){ta=document.createElement('div');ta.className='turn-arr';hdr.appendChild(ta);}
+      ta.textContent=active?'▶':'';
+    }
+    const mv=document.getElementById('pm'+i);
+    if(mv){mv.textContent='$'+p.money.toLocaleString();mv.className='stat-val'+(p.money<=2000?' low':'');}
+    const gv=document.getElementById('pg'+i);
+    if(gv){
+      gv.textContent=p.gas+'G';
+      gv.className='stat-val'+(p.gas<=3?' low':'');
+      // Show OUT icon if gas 0
+      if(p.gas<=0) gv.textContent='0G ⛽💨';
+    }
+    const gb=document.getElementById('pgb'+i);
+    if(gb){gb.style.width=(Math.max(0,Math.min(10,p.gas))*10)+'%';gb.className='gas-fill'+(p.gas<=3?' low':'');}
+    UPG_DEFS.forEach(u=>{
+      const el=document.getElementById(`ui${i}_${u.id}`);
+      if(!el)return;
+      const has=p.upg.includes(u.id);
+      el.className=`upg-item ${has?u.cls+' unlocked':'locked'}`;
+    });
+    const mb=document.getElementById('mpb'+i);
+    if(mb){mb.style.display=p.upg.length?'flex':'none';mb.textContent=p.upg.length;}
+  });
+}
+
+function setTurn(){
+  if(over)return;
+  const p=players[cur];
+  const label=`${p.icon} ${p.name}`;
+  document.getElementById('turn-badge-bot').textContent='Turno: '+label;
+  document.querySelectorAll('.tile').forEach(t=>t.classList.remove('tile-active'));
+  document.getElementById('t'+p.pos)?.classList.add('tile-active');
+  updPanels();
+  updNavbar();
+}
+
+function updNavbar(){
+  document.getElementById('turn-counter').textContent=turnCount;
+  const p=players[cur];
+  document.getElementById('nav-turn-name').textContent=p?`${p.icon} ${p.name}`:'—';
+  const pot=players.reduce((s,pp)=>s+pp.money,0);
+  document.getElementById('nav-pot').textContent=pot.toLocaleString();
+}
+
+// ══════════════════════
+//  DADO
+// ══════════════════════
+async function rollDice(){
+  playSound('dice');
+  if(rolling||over)return;
+  const p=players[cur];
+  if(p.elim){nextTurn();return;}
+  if(p.skip){p.skip=false;toast(`⏭️ ${p.icon} ${p.name} pierde su turno.`);await sleep(1400);nextTurn();return;}
+  rolling=true;
+  document.getElementById('btn-roll').disabled=true;
+  const db=document.getElementById('dice-box');
+  db.classList.add('dice-rolling');
+  rumbleScreen();
+  let roll=1;
+  await new Promise(res=>{
+    let c=0;const iv=setInterval(()=>{roll=~~(Math.random()*6)+1;db.textContent=DICE_FACES[roll-1];if(++c>=14){clearInterval(iv);res();}},70);
+  });
+  db.classList.remove('dice-rolling');
+  spawnFloat(db,'✨');
+  turnCount++;
+  for(let s=0;s<roll;s++){
+    await sleep(340);
+    p.pos=(p.pos+1)%TOTAL;
+    if(p.pos===0){p.money+=2000;p.gas=Math.max(0,p.gas-1);toast(`🏠 ${p.name} pasó por SALIDA +$2.000`);updPanels();}
+    moveMoto(cur,p.pos,true);
+    document.querySelectorAll('.tile').forEach(t=>t.classList.remove('tile-active'));
+    document.getElementById('t'+p.pos)?.classList.add('tile-active');
+  }
+  await sleep(250);
+  rolling=false;
+  doTile(p.pos);
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ══════════════════════
+//  TILE ACTIONS
+// ══════════════════════
+function doTile(pos){
+  switch(BOARD[pos].t){
+    case'casa':      doCasa();break;
+    case'azar':      doAzar();break;
+    case'carrera':   doCarrera(null);break;
+    case'mejora':    doMejora();break;
+    case'pinchazo':  doPinchazo();break;
+    case'trancon':   doTrancon();break;
+    case'reten':     doReten();break;
+    case'plaza':     doCarrera('Plaza Alfonso López');break;
+    case'hospital':  doCarrera('Hospitalito');break;
+    case'pilonera':  doCarrera('La Pilonera Mayor');break;
+    case'balneario': doCarrera('Balneario Hurtado');break;
+    case'guatapuri': doGuatapuri();break;
+    default:         nextTurn();break;
+  }
+}
+function doCasa(){
+  const p=players[cur];p.money+=2000;p.gas=Math.min(10,p.gas+1);
+  modal('casa','🏠','¡SALIDA!',null,'Cobraste el arranque del día y descansaste.','+$2.000 💰  |  +1G ⛽',()=>{updPanels();chkElim()||nextTurn();});
+}
+function doAzar(){
+  const p=players[cur];
+  const c=AZAR[~~(Math.random()*AZAR.length)];
+  if(c.reten){doReten();return;}
+  if(c.neg&&p.upg.includes('app')){modal('azar','📱','AZAR – '+c.t,null,c.txt,'App de Transporte: carta negativa ignorada.',()=>nextTurn());return;}
+  p.money+=c.$;p.gas=Math.min(10,p.gas+c.g);
+  if(c.skip)p.skip=true;
+  let ef='';
+  if(c.$>0)ef+=`+$${c.$.toLocaleString()} `;
+  if(c.$<0)ef+=`-$${Math.abs(c.$).toLocaleString()} `;
+  if(c.g>0)ef+=`+${c.g}G `;
+  if(c.g<0)ef+=`${c.g}G `;
+  if(c.skip)ef+='— Pierdes un turno';
+  if(!ef.trim())ef='Sin cambios';
+  modal('azar',c.icon,'AZAR – '+c.t,null,c.txt,ef,()=>{updPanels();chkElim()||nextTurn();});
+}
+function doReten(){
+  const p=players[cur];
+  if(p.upg.includes('papeles')){
+    modal('reten','🚨','RETÉN LA CEIBA',null,'El retén. Papeles en mano.','📄 Papeles al Día: ¡pasaste sin problema!',()=>nextTurn());
+  } else {
+    const lost=Math.floor(p.money*0.5);p.money=Math.max(0,p.money-lost);
+    modal('reten','🚨','¡RETÉN!',null,'O pagas el 50% o te quitan la moto.',`💸 Pagaste: -$${lost.toLocaleString()}`,()=>{updPanels();chkElim()||nextTurn();});
+  }
+}
+function doCarrera(dest){
+  let pool=dest?CARRERAS.filter(c=>c.dest===dest):CARRERAS;
+  if(!pool.length)pool=CARRERAS;
+  const c=pool[~~(Math.random()*pool.length)];
+  const p=players[cur];
+  let g=c.g;if(p.upg.includes('casco'))g=Math.min(0,g+1);
+  const ex=p.upg.includes('papeles')?1000:0;
+  p.money+=c.$+ex;p.gas=Math.min(10,p.gas+g);
+  const ef=`+$${(c.$+ex).toLocaleString()}  |  ${g}G gas`+(c.tipo==='Responsable'?' 👏':'');
+  const mtype=c.tipo==='Responsable'?'carrera-bien':'carrera-mal';
+  modal(mtype,c.icon,'CARRERA: '+c.dest,c.tipo,'"'+c.txt+'"',ef,()=>{updPanels();chkElim()||nextTurn();});
+}
+function doMejora(){
+  const p=players[cur];
+  const avail=MEJORAS.filter(m=>!p.upg.includes(m.id));
+  let html='';
+  if(!avail.length){html='<p style="font-family:Jaro,sans-serif;color:rgba(255,255,255,.85);margin-bottom:12px">¡Todas las mejoras compradas! 🏆</p>';}
+  else{
+    html='<div class="shop-grid">';
+    avail.forEach(m=>{
+      const ok=p.money>=m.cost;
+      html+=`<div class="shop-item"><div class="si-icon">${m.icon}</div>
+        <div class="si-name">${m.name}</div><div class="si-desc">${m.desc}</div>
+        <button class="btn-buy" ${ok?'':'disabled'} onclick="buyUpg('${m.id}')">Comprar $${m.cost.toLocaleString()}</button></div>`;
+    });
+    html+='</div>';
+  }
+  modal('mejora','⭐','¡MEJORA TU MOTO!',null,'Invierte en tu equipo.',null,()=>nextTurn(),html);
+}
+function doPinchazo(){
+  const p=players[cur];
+  if(p.upg.includes('manten')){
+    p.gas=Math.min(10,p.gas+2);
+    modal('carrera-bien','🔧','PINCHAZO',null,'Se fue la llanta… pero la moto está mantenida.','🔧 Inmune. +2G bonus.',()=>{updPanels();nextTurn();});
+  } else {
+    p.money=Math.max(0,p.money-2000);p.gas=Math.max(0,p.gas-1);
+    modal('pinchazo','🔧','¡PINCHAZO!',null,'Se fue la llanta. Toca el vulcanizador.','-$2.000  |  -1G',()=>{updPanels();chkElim()||nextTurn();});
+  }
+}
+function doTrancon(){players[cur].skip=true;modal('trancon','🚦','¡TRANCÓN!',null,'La calle está represada.','Pierdes el próximo turno 😤',()=>nextTurn());}
+function buyUpg(id){
+  const p=players[cur],m=MEJORAS.find(x=>x.id===id);
+  if(!m||p.money<m.cost){playSound('error');return;}
+  playSound('success');
+  p.money-=m.cost;p.upg.push(id);
+  toast(`${m.icon} ¡Compraste ${m.name}!`);updPanels();doMejora();
+}
+function doGuatapuri(){
+  const p=players[cur];p.money=Math.max(0,p.money-1000);
+  modal('azar','🛍️','C.C. GUATAPURÍ',null,'Tocó pagar el parqueadero.','-$1.000 de parqueo 😅',()=>{updPanels();chkElim()||nextTurn();});
+}
+
+// ══════════════════════
+//  ELIMINACIÓN — gas=0 o money=0 te elimina. Gana el de más plata.
+// ══════════════════════
+function chkElim(){
+  const p=players[cur];
+  // Gas reached 0 — eliminated from road (but money preserved for final ranking)
+  if(p.gas<=0){
+    p.gas=0;
+    p.elim=true;
+    toast(`⛽ ${p.icon} ${p.name} se quedó sin gasolina — ¡eliminado!`);
+    document.getElementById('mp'+p.i)?.remove();
+    updPanels();
+    const alive=players.filter(x=>!x.elim);
+    if(alive.length<=1){setTimeout(showWinner,1400);return true;}
+    setTimeout(nextTurn,1800);
+    return true;
+  }
+  // Money reached 0 — also eliminated
+  if(p.money<=0){
+    p.money=0;
+    p.elim=true;
+    toast(`💀 ${p.icon} ${p.name} quedó sin dinero y sale de la vía.`);
+    document.getElementById('mp'+p.i)?.remove();
+    updPanels();
+    const alive=players.filter(x=>!x.elim);
+    if(alive.length<=1){setTimeout(showWinner,1400);return true;}
+    setTimeout(nextTurn,1800);
+    return true;
+  }
+  return false;
+}
+
+function nextTurn(){
+  document.getElementById('btn-roll').disabled=false;
+  if(over)return;
+  let t=0;do{cur=(cur+1)%numPlayers;t++;}while(players[cur].elim&&t<numPlayers);
+  if(players.filter(x=>!x.elim).length<=1){showWinner();return;}
+  setTurn();
+}
+
+function endGameNow(){
+  playSound('click');
+  if(over)return;
+  const alive=players.filter(x=>!x.elim);
+  if(alive.length===0){location.reload();return;}
+  showWinner();
+}
+
+function showWinner(){
+  playSound('win');
+  over=true;rolling=false;
+  document.getElementById('btn-roll').disabled=true;
+  // Sort all players by money — winner is whoever has most, regardless of elimination
+  const sorted=[...players].sort((a,b)=>b.money-a.money);
+  const w=sorted[0];
+  document.getElementById('winner-name').textContent=`${w.icon} ${w.name}`;
+  document.getElementById('winner-sub').textContent=`¡El Rey del Rebusque con $${w.money.toLocaleString()}!`;
+  document.getElementById('score-table').innerHTML=
+    sorted.map((p,i)=>{
+      const reason=p.elim?(p.gas<=0?' ⛽ Sin gasolina':' ☠️ Sin plata'):'';
+      return `<div class="score-row">
+        <span>${['🥇','🥈','🥉','4️⃣'][i]} ${p.icon} ${p.name}${reason}</span>
+        <span>$${p.money.toLocaleString()}</span>
+      </div>`;
+    }).join('');
+  document.getElementById('winner-overlay').classList.add('show');
+  launchConfetti();
+}
+
+// ══════════════════════
+//  MODAL
+// ══════════════════════
+// modalType: 'azar'|'carrera-bien'|'carrera-mal'|'mejora'|'reten'|'pinchazo'|'trancon'|'casa'
+function modal(modalType,icon,title,tipo,text,effect,cb,extra=''){
+  playSound('modal');
+  pendCB=cb;
+  const m=document.getElementById('modal');
+  // Set the right background class
+  m.className='modal'+(modalType?' m-'+modalType:'');
+  document.getElementById('modal-icon').textContent=icon;
+  document.getElementById('modal-title').textContent=title;
+  const te=document.getElementById('modal-tipo');
+  te.textContent=tipo||'';te.style.display=tipo?'inline-block':'none';
+  document.getElementById('modal-text').textContent=text||'';
+  const ee=document.getElementById('modal-effect');
+  ee.textContent=effect||'';ee.style.display=effect?'block':'none';
+  document.getElementById('shop-area').innerHTML=extra;
+  document.getElementById('overlay').classList.add('show');
+}
+function closeModal(){
+  playSound('click');
+  document.getElementById('overlay').classList.remove('show');
+  if(pendCB)pendCB();pendCB=null;
+}
+function showRules(){playSound('click');document.getElementById('rules-overlay').classList.add('show');}
+function closeRules(){document.getElementById('rules-overlay').classList.remove('show');}
+
+// ══════════════════════
+//  TOAST & PARTICLES
+// ══════════════════════
+let toastT=null;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2700);
+}
+function spawnFloat(ref,emoji){
+  const r=ref.getBoundingClientRect();
+  const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  ['💰','✨','💫','⭐','🎉'].forEach((e,i)=>{
+    const el=document.createElement('div');el.className='float-e';
+    const a=((i/5)*Math.PI*2);
+    el.style.left=(cx+Math.cos(a)*36)+'px';el.style.top=(cy+Math.sin(a)*26)+'px';
+    el.textContent=e;document.body.appendChild(el);setTimeout(()=>el.remove(),950);
+  });
+}
+function launchConfetti(){
+  const cs=['#ff6b35','#ffe135','#4ecdc4','#ff6bbd','#4caf50','#e06820'];
+  for(let i=0;i<55;i++){
+    const el=document.createElement('div');el.className='confetti';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-20px;background:${cs[~~(Math.random()*cs.length)]};
+      --dur:${1.2+Math.random()*1.5}s;--dx:${(Math.random()-.5)*200}px;
+      --dy:${400+Math.random()*400}px;--rot:${Math.random()*720}deg;
+      animation-delay:${Math.random()*.8}s;width:${6+Math.random()*9}px;
+      height:${6+Math.random()*9}px;border-radius:${Math.random()>.5?'50%':'2px'};`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3000);
+  }
+}
+
+// Resize handler
+window.addEventListener('resize',()=>{
+  if(players.length>0&&!over){
+    buildBoard();placeMotos();
+    players.forEach((p,i)=>moveMoto(i,p.pos,false));
+    document.querySelectorAll('.tile').forEach(t=>t.classList.remove('tile-active'));
+    document.getElementById('t'+players[cur].pos)?.classList.add('tile-active');
+  }
+});
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'&&!document.getElementById('overlay').classList.contains('show'))
+    {e.preventDefault();rollDice();}
+  if(e.code==='Enter'&&document.getElementById('overlay').classList.contains('show'))
+    closeModal();
+});
+</script>
+</body>
+</html>
